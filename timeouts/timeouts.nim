@@ -18,7 +18,7 @@
 ## 
 ##   clock.add(
 ##     (proc() =
-##       echo "this is f***ing ugly as s**t"
+##       echo "this is ugly"
 ##       echo "and is hard to remember unless"
 ##       echo "you're a robot"
 ##       ).timeout(every(milliseconds=500))
@@ -429,9 +429,14 @@ if isMainModule:
 
   # You can nest them as well.
   clock.run after(milliseconds=2000):
-    echo "ok"
-    clock.run after(milliseconds=2000):
-      echo "so"
+    echo "Hello"
+    clock.run after(milliseconds=50):
+      echo "world"
+
+  var c = 0
+  clock.run every(seconds=1):
+    echo $c
+    inc c
 
   # You must call clock.tick() in a loop,
   # or call tick() on the IntervalProc or
