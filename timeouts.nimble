@@ -3,4 +3,4 @@ author          = "RattleyCooper"
 description     = "Super simple timeout/interval functions"
 license         = "MIT"
 
-requires "nim >= 1.4.8"
+requires "nim >= 2.0.0"
