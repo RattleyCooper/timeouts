@@ -364,6 +364,8 @@ proc tick*(clock: Clock) =
   # Loop over the timeouts seq and rotate any
   # procs that didn't fire back into the front
   # of the stack.
+  clock.lap()
+
   var c: int
   while clock.timeouts.high > c:
     let t = clock.timeouts.pop()
@@ -375,7 +377,6 @@ proc tick*(clock: Clock) =
   # proc on each one.
   for intproc in clock.intervals:
     discard intproc.tick()
-  clock.lap()
 
 if isMainModule:
   echo "starting test"
