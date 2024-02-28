@@ -9,6 +9,7 @@ clock.run after(seconds=1):
 var c = 0
 clock.run every(seconds=1):
   echo $c
+  inc c
 ```
 ## Install
 
