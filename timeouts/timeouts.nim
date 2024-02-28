@@ -30,7 +30,10 @@
 ## 
 ##    var clock = newClock()
 ##    
-##    clock.timeout every(milliseconds=500):
+##    clock.run every(seconds=1):
+##      echo "w00t"
+## 
+##    clock.run after(milliseconds=500):
 ##      echo "this is a better callback"
 ##      echo "and will make your life easier"
 ##      echo "you can read all the code in one place"
