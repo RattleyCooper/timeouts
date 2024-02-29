@@ -17,9 +17,9 @@ Download this repository, unzip it, navigate to the folder and run `nimble insta
 
 ## Example
 
-Note that this module uses the same constructor arguments you'd use for [`initDuration`](https://nim-lang.org/docs/times.html#initDuration%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64).
+Note that this module uses the same constructor arguments you'd use for [`initDuration`](https://nim-lang.org/docs/times.html#initDuration%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64%2Cint64) for a lot of procedures.
 
-The easiest way to do this is by taking advantage of the `Clock.run` macro.
+The easiest way to schedule callbacks is by taking advantage of the `Clock.run` macro. You can create and schedule a `TimeoutProc` that fires once `after` a duration, or create and schedule a `IntervalProc` that fires `every` duration. These can also be nested.
 
 ```nim
 import timeouts/timeouts
@@ -27,15 +27,16 @@ import timeouts/timeouts
 # Create new clock
 var clock = newClock()
 
-# Run the following block of code every 10 seconds
+# Run the following block of code `every` 10 seconds
 # use the same constructor arguments you would use
-# for `initDuration`
+# for `initDuration`.
 clock.run every(seconds=10):
   echo "hello"
 
   # Run the following block of code after 50 milliseconds
   # Since this is nested it will fire after the parent
-  # callback fires.
+  # callback fires. Since we use an `after` object it will 
+  # only fire once after the given duration.
   clock.run after(milliseconds=50):
     echo "world"
 
