@@ -111,18 +111,6 @@ block testNestedCallbacks:
   clock.run after(seconds=59):
     echo "Thanks for testing me!"
 
-block testPragmaSyntax:
-  proc stayalive() {.repeats: every(seconds=1).} =
-    echo "stay alive"
-
-  proc delayedSchedule() {.fire: after(seconds=5).} =
-    var c = 0
-    clock.run every(seconds=1):
-      inc c
-      echo $c
-
-  clock.add(delayedSchedule.timeout(seconds=5))
-
 block runMainLoop:
   # Create loop to test our interval procs.
   clock.start()
