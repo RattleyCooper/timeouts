@@ -20,7 +20,7 @@ Download this repository, unzip it, navigate to the folder and run `nimble insta
 The easiest way to do this is by taking advantage of the `Clock.run` macro.
 
 ```nim
-import timeouts
+import timeouts/timeouts
 
 # Create new clock
 var clock = newClock()
