@@ -1,9 +1,8 @@
-import std/[monotimes, times, os]
+import std/[times, os]
 import timeouts/timeouts
 
 
 var clock: Clock = newClock()
-var c = 0
 
 block testDurationShorthandMacros:
   assert every(seconds=1).Duration == initDuration(seconds=1)
@@ -47,6 +46,7 @@ block testTimeoutProcs:
 block testIntervalProcs:
   # Do interval procs fire on schedule?
   # Block syntax
+  var c = 1
   clock.run every(seconds=1):
     inc c
 
@@ -84,7 +84,7 @@ block testNestedCallbacks:
     clock.run after(seconds=1):
       echo "second run"
 
-  # weeeEEEEEEeeeee!
+  # Should start echoing after 16 seconds
   clock.run after(seconds=5):
     clock.run every(seconds=10):
       clock.run after(seconds=1):
@@ -102,15 +102,30 @@ block testNestedCallbacks:
                   clock.run after(seconds=1):
                     echo "Africa"
 
-  # I would test nested clock.run every but I feel like
+  # I would test nested `clock.run every` but I feel like
   # that's a bit much given that it's a terrible idea.
+
+  # Schedule a quit event.
+  clock.run after(seconds=60):
+    quit(0)
+  clock.run after(seconds=59):
+    echo "Thanks for testing me!"
+
+block testPragmaSyntax:
+  proc stayalive() {.repeats: every(seconds=1).} =
+    echo "stay alive"
+
+  proc delayedSchedule() {.fire: after(seconds=5).} =
+    var c = 0
+    clock.run every(seconds=1):
+      inc c
+      echo $c
+
+  clock.add(delayedSchedule.timeout(seconds=5))
 
 block runMainLoop:
   # Create loop to test our interval procs.
-  var lastC = c
   clock.start()
-  while (clock.lapTime - clock.startTime).inSeconds <= 47:
-    if lastC != c:
-      echo $c
-      lastC = c
+  while true:
     clock.tick()
+    clock.fsleep(20)
