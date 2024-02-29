@@ -26,6 +26,8 @@ import timeouts/timeouts
 var clock = newClock()
 
 # Run the following block of code every 10 seconds
+# use the same constructor arguments you would use
+# for `initDuration`
 clock.run every(seconds=10):
   echo "hello"
 
