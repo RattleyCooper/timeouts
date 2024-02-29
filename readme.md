@@ -46,32 +46,6 @@ while true:
   clock.fsleep(milliseconds=50)
 ```
 
-You can also decorate procs directly:
-
-NOTE: YOU MUST HAVE A `clock` variable defined in your code for the `repeat` and `fire` macro to function.
-
-```nim
-import timeouts/timeouts
-
-var clock = newClock()
-
-proc stayAlive() {.repeat: every(seconds=1).} =
-  echo "stay alive"
-
-proc shutdown() {.fire: after(seconds=10)} =
-  quit(0)
-
-proc delayedSchedule() {.fire: after(seconds=5).} =
-  var c = 0
-  clock.run every(seconds=1):
-    inc c
-    echo $c
-
-while true:
-  clock.tick()
-  clock.fsleep(milliseconds=20)
-```
-
 You can also construct `TimeoutProc`s and `IntervalProc`s using some shorthand constructors so you can add them to the `Clock` with more
 control.
 
