@@ -366,12 +366,10 @@ proc tick*(clock: Clock) =
   # of the stack.
   clock.lap()
 
-  var c: int
-  while clock.timeouts.high > c:
-    let t = clock.timeouts.pop()
+  for ind in 0 .. clock.timeouts.high:
+    var t = clock.timeouts.pop()
     if not t.tick():
       clock.timeouts.insert(t, 0)
-    inc c
 
   # Loop over intervals seq and call the tick
   # proc on each one.
