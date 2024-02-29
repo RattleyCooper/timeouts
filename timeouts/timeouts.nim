@@ -345,7 +345,25 @@ proc add*(clock: Clock, intproc: IntervalProc) =
   #
   clock.intervals.add(intproc)
 
-macro repeats*(e: static[Every], u: untyped): untyped =
+macro fires*(aft: static[After], u: untyped): untyped =
+  ## Enables a {.fires: after(days=1).} pragma
+  #  for procedures.  This REQUIRES a `clock` variable to
+  #  exist in the code calling it.
+  # 
+
+  # Extract proc's code block from the decorated proc.
+  var procBody = newStmtList()
+  for n in u:
+    if n.kind == nnkStmtList:
+      procBody = n
+      break
+  
+  # Add an IntervalProc to the `clock` variable using the 
+  # decorated proc's code block.
+  result = quote do:
+    clock.add((proc()=`procBody`).newTimeoutProc(`aft`))
+
+
   ## Enables a {.repeats: every(milliseconds=50).} pragma
   #  for procedures.  This REQUIRES a `clock` variable to
   #  exist in the code calling it.
