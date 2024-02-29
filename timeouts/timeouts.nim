@@ -364,7 +364,6 @@ macro fire*(aft: static[After], u: untyped): untyped =
     `u`
     clock.add((proc()=`procBody`).newTimeoutProc(`aft`))
 
-
 macro repeats*(evr: static[Every], u: untyped): untyped =
   ## Enables a {.repeats: every(milliseconds=50).} pragma
   #  for procedures.  This REQUIRES a `clock` variable to
@@ -415,82 +414,3 @@ proc tick*(clock: Clock) =
   # proc on each one.
   for intproc in clock.intervals:
     discard intproc.tick()
-
-if isMainModule:
-  echo "starting test"
-  var clock: Clock = newClock()
-
-  # Make some procs to use as callbacks
-  proc test() =
-    echo "test!"
-  proc test2() = 
-    echo "test2!!!"
-  proc testInterval() = 
-    echo "w00t"
-  proc mtest()=
-    echo "macro magic!"
-
-  # fire callback once after duration
-  var someTimeoutProc = test.newTimeoutProc(milliseconds=2000)
-
-  # fire callback repeatedly every duration
-  var someIntervalProc = testInterval.newIntervalProc(milliseconds=500)
-  
-  # adding callbacks to the clock the old fasioned way
-  clock.add(someTimeoutProc)
-  clock.add(someIntervalProc)
-
-  # timeout is shorthand for newTimeoutProc
-  clock.add(test.timeout(milliseconds=500, seconds=5))
-  
-  # interval is shorthand for newIntervalProc
-  clock.add(mtest.interval(seconds=5))
-
-  # Note that callback procs cannot have arguments
-  # but you can easily get around that
-  proc someWrapper(localStr: string) =
-    clock.add((proc() = echo localStr).timeout())
-  
-  someWrapper("This callback was wrapped!")
-
-  # # Automatically register interval proc
-  # # and use the indented section as the
-  # # body of the callback procedure.
-  clock.run every(seconds=10):
-    echo "Do you see?"
-  
-  # # Automatically register timeout proc
-  # # and use the indented section as the
-  # # body of the callback procedure.
-  clock.run after(seconds=2):
-    echo "w00t w00t"
-
-  # You can also use `every` and `after` 
-  # as shorthand for timeout and interval
-  clock.add(test2.every(seconds=1))
-
-  # You can nest them as well.
-  clock.run after(milliseconds=2000):
-    echo "Hello"
-    clock.run after(milliseconds=50):
-      echo "world"
-
-  var c = 0
-  clock.run every(seconds=1):
-    echo $c
-    inc c
-
-  # You must call clock.tick() in a loop,
-  # or call tick() on the IntervalProc or
-  # on the TimeoutProc directly
-  while true:
-    clock.tick()
-    # Sleep for a fixed duration. This
-    # includes processing time since 
-    # last call to clock.tick().
-    # So if it took 150ms to process
-    # everything between these 2 calls
-    # the fsleep proc wouldn't sleep at
-    # all and if it took 80ms it would
-    # sleep for 20ms.
-    clock.fsleep(milliseconds=100)
