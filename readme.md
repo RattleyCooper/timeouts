@@ -50,4 +50,4 @@ while true:
 
 `clock.fsleep(milliseconds=50)` will sleep for a fixed time of 50 milliseconds. In this example, if the time between `clock.tick()` and `clock.fsleep` exceeds 50 milliseconds the sleep function will not sleep at all.
 
-`clock.sleep` is also available for ease of use. You can use it with the same arguments you would give to `initDuration` and it will sleep for that duration in milliseconds.
+`clock.sleep` is also available for ease of use. You can use it with the same arguments you would give to `initDuration` and it will sleep for that duration in milliseconds.  `clock.sleep(seconds=1, milliseconds=500)`
