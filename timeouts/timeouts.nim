@@ -364,6 +364,7 @@ macro fires*(aft: static[After], u: untyped): untyped =
     clock.add((proc()=`procBody`).newTimeoutProc(`aft`))
 
 
+macro repeats*(evr: static[Every], u: untyped): untyped =
   ## Enables a {.repeats: every(milliseconds=50).} pragma
   #  for procedures.  This REQUIRES a `clock` variable to
   #  exist in the code calling it.
@@ -379,17 +380,18 @@ macro fires*(aft: static[After], u: untyped): untyped =
   # Add an IntervalProc to the `clock` variable using the 
   # decorated proc's code block.
   result = quote do:
-    clock.add((proc()=`procBody`).newIntervalProc(`e`))
+    clock.add((proc()=`procBody`).newIntervalProc(`evr`))
 
 proc tick*[T: TimeoutProc | IntervalProc](t: T): bool =
   ## Try to fire a timeout/interval procedure.
   #
   result = false
+  t.lastAttempt = getMonoTime()
+
   if (t.lastAttempt - t.lastCall) >= t.duration.Duration:
     t.callback()
     result = true
     t.lastCall = getMonoTime()
-  t.lastAttempt = getMonoTime()
 
 proc tick*(clock: Clock) = 
   ## Try to fire timeout and interval procedures,
