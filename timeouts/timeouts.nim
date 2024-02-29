@@ -345,7 +345,7 @@ proc add*(clock: Clock, intproc: IntervalProc) =
   #
   clock.intervals.add(intproc)
 
-macro fires*(aft: static[After], u: untyped): untyped =
+macro fire*(aft: static[After], u: untyped): untyped =
   ## Enables a {.fires: after(days=1).} pragma
   #  for procedures.  This REQUIRES a `clock` variable to
   #  exist in the code calling it.
@@ -361,6 +361,7 @@ macro fires*(aft: static[After], u: untyped): untyped =
   # Add an IntervalProc to the `clock` variable using the 
   # decorated proc's code block.
   result = quote do:
+    `u`
     clock.add((proc()=`procBody`).newTimeoutProc(`aft`))
 
 
@@ -380,6 +381,7 @@ macro repeats*(evr: static[Every], u: untyped): untyped =
   # Add an IntervalProc to the `clock` variable using the 
   # decorated proc's code block.
   result = quote do:
+    `u`
     clock.add((proc()=`procBody`).newIntervalProc(`evr`))
 
 proc tick*[T: TimeoutProc | IntervalProc](t: T): bool =
