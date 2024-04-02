@@ -10,6 +10,9 @@ var c = 0
 clock.run every(seconds=1):
   echo $c
   inc c
+
+while true:
+  clock.tick()
 ```
 ## Install
 
