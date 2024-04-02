@@ -1,5 +1,5 @@
 import std/[times, os]
-import timeouts/timeouts
+import ../timeouts/timeouts
 
 
 var clock: Clock = newClock()
@@ -61,7 +61,6 @@ block testIntervalProcs:
   clock.add(intervalObj2)
   assert clock.intervals[^1] == intervalObj2
   assert clock.intervals[^1] is IntervalProc
-
 
 block testNestedCallbacks:
   clock.run every(seconds=10):
