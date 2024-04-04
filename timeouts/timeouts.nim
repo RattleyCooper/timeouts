@@ -290,12 +290,12 @@ macro every*(p: proc(), v: varargs[untyped]): untyped =
   quote do:
     `p`.newIntervalProc(initDuration(`v`))
 
-macro after*(v: varargs[untyped]): untyped =
+template after*(v: varargs[untyped]): untyped =
   ## Shorthand macro for initDuration.  Just feed it the
   #  same args/kwargs you'd feed to initDuration.
   #
-  quote do:
-    initDuration(`v`).After
+  # quote do:
+  initDuration(v).After
 
 macro after*(p: proc(), v: varargs[untyped]): untyped =
   ## Shorthand macro for initDuration.  Just feed it the
@@ -320,14 +320,14 @@ macro interval*(clock: Clock, d: static[Duration], body: untyped): untyped =
   quote do:
     `clock`.add(newIntervalProc(proc() = `body`, `d`))
 
-macro run*(clock: Clock, d: static[Every], body: untyped): untyped =
+macro run*(clock: Clock, d: Every, body: untyped): untyped =
   ## Enables the clock.run every(milliseconds=50) syntax.
   #  This creates a callback that runs on an interval.
   #
   quote do:
     `clock`.add(newIntervalProc(proc() = `body`, `d`))
 
-macro run*(clock: Clock, d: static[After], body: untyped): untyped =
+macro run*(clock: Clock, d: After, body: untyped): untyped =
   ## Enables the clock.run after(milliseconds=50) syntax.
   #  This creates a callback that runs after a given 
   #  amount of time.
@@ -414,3 +414,15 @@ proc tick*(clock: Clock) =
   # proc on each one.
   for intproc in clock.intervals:
     discard intproc.tick()
+
+
+if isMainModule:
+  var clock = newClock()
+  let ms = 1500
+  clock.run after(milliseconds=ms):
+    echo "wooo"
+    quit(QuitSuccess)
+
+  while true:
+    clock.tick()
+  
